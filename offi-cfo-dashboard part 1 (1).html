@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFI - Análise Financeira Executiva | TechCorp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Layout */
+        .presentation {
+            min-height: 100vh;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+        
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        /* Typography */
+        .slide-number {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .slide-title {
+            font-size: clamp(48px, 6vw, 72px);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        
+        .slide-subtitle {
+            font-size: clamp(20px, 2.5vw, 28px);
+            font-weight: 400;
+            color: #999;
+            margin-bottom: 48px;
+        }
+        
+        /* Intro Slide */
+        .intro-slide {
+            text-align: center;
+            background: radial-gradient(ellipse at center, #111 0%, #000 100%);
+        }
+        
+        .company-name {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 40px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        .main-title {
+            font-size: clamp(64px, 10vw, 120px);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 32px;
+        }
+        
+        .date {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        /* TCO Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 60px;
+        }
+        
+        .option-card {
+            background: #111;
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-4px);
+            background: #1a1a1a;
+        }
+        
+        .option-card.recommended {
+            background: #1a1a1a;
+            border: 2px solid #333;
+        }
+        
+        .option-card.recommended::before {
+            content: 'RECOMENDADO';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: #fff;
+            color: #000;
+            padding: 4px 40px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            transform: rotate(45deg);
+        }
+        
+        .model-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .model-type {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+        
+        .metric {
+            margin-bottom: 24px;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .metric-detail {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* Charts */
+        .chart-container {
+            background: #111;
+            border-radius: 24px;
+            padding: 40px;
+            margin-top: 48px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        /* Financial Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+        
+        .metric-card {
+            background: #111;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .metric-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .metric-value-large {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label-small {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Key Insights */
+        .insights-list {
+            margin-top: 48px;
+        }
+        
+        .insight-item {
+            background: #111;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .insight-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #333;
+            min-width: 80px;
+        }
+        
+        .insight-content h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .insight-content p {
+            color: #999;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+        
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            margin: 16px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background: #fff;
+            transform: scale(1.5);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        /* Financing Options */
+        .financing-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+        
+        .financing-card {
+            background: #111;
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .financing-card.recommended {
+            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+            border: 2px solid #333;
+        }
+        
+        .financing-type {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+        
+        .financing-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+        
+        .financing-features {
+            list-style: none;
+        }
+        
+        .financing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .financing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-label {
+            color: #999;
+        }
+        
+        .feature-value {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        /* Summary */
+        .summary-card {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            border-radius: 32px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .summary-label {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+        }
+        
+        .summary-value {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(180deg, #fff 0%, #999 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .summary-detail {
+            font-size: 20px;
+            color: #999;
+        }
+        
+        /* Progress Indicator */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #222;
+            z-index: 1000;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Tax Analysis */
+        .tax-breakdown {
+            background: #0a0a0a;
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 24px;
+        }
+        
+        .tax-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #222;
+        }
+        
+        .tax-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .tax-label {
+            color: #999;
+        }
+        
+        .tax-value {
+            text-align: right;
+        }
+        
+        .positive {
+            color: #4ade80;
+        }
+        
+        .negative {
+            color: #f87171;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill"></div>
+    </div>
+    
+    <div class="nav-dots">
+        <div class="nav-dot active"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+    </div>
+    
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <section class="slide intro-slide">
+            <div class="slide-content fade-in-up">
+                <div class="company-name">TechCorp Brasil</div>
+                <h1 class="main-title">Análise<br>Executiva CFO</h1>
+                <p class="slide-subtitle">Comparativo financeiro e tributário das opções de ocupação</p>
+                <p class="date">Julho 2025</p>
+            </div>
+        </section>
+        
+        <!-- Slide 2: Executive Summary -->
+        <section class="slide">
+            <div class="slide-number">01</div>
+            <div class="slide-content">
+                <h2 class="slide-title">VPL positivo de<br>R$ 18.8M com OFFI</h2>
+                <p class="slide-subtitle">Comparação dos 3 modelos de ocupação para 2.100m²</p>
+                
+                <div class="comparison-grid">
+                    <div class="option-card">
+                        <h3 class="model-name">Tradicional</h3>
+                        <p class="model-type">CAPEX próprio • 240 dias</p>
+                        <div class="metric">
+                            <p class="metric-label">Investimento inicial</p>
+                            <p class="metric-value">R$ 18.9M</p>
+                            <p class="metric-detail">R$ 9.000/m²</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">VPL 5 anos @ 12%</p>
+                            <p class="metric-value negative">-R$ 37.6M</p>
+                            <p class="metric-detail">Pior resultado</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">Benefício fiscal</p>
+                            <p class="metric-value">R$ 3.06M</p>
+                            <p class="metric-detail">Depreciação 10 anos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="option-card recommended">
+                        <h3 class="model-name">OFFI Finance</h3>
+                        <p class="model-type">100% OPEX • 60 dias</p>
+                        <div class="metric">
+                            <p class="metric-label">Investimento inicial</p>
+                            <p class="metric-value positive">R$ 0</p>
+                            <p class="metric-detail">+ 525k OFFI Coins</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">VPL 5 anos @ 12%</p>
+                            <p class="metric-value positive">-R$ 18.8M</p>
+                            <p class="metric-detail">50% melhor</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">Benefício fiscal</p>
+                            <p class="metric-value positive">R$ 3.67M</p>
+                            <p class="metric-detail">100% dedutível</p>
+                        </div>
+                    </div>
+                    
+                    <div class="option-card">
+                        <h3 class="model-name">Full Service</h3>
+                        <p class="model-type">All-inclusive • 30 dias</p>
+                        <div class="metric">
+                            <p class="metric-label">Mensalidade total</p>
+                            <p class="metric-value">R$ 1.3M</p>
+                            <p class="metric-detail">R$ 650/m²</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">VPL 5 anos @ 12%</p>
+                            <p class="metric-value negative">-R$ 54.8M</p>
+                            <p class="metric-detail">65% mais caro</p>
+                        </div>
+                        <div class="metric">
+                            <p class="metric-label">Flexibilidade</p>
+                            <p class="metric-value">Alta</p>
+                            <p class="metric-detail">Contratos flexíveis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Slide 3: Financial Deep Dive -->
+        <section class="slide">
+            <div class="slide-number">02</div>
+            <div class="slide-content">
+                <h2 class="slide-title">Estrutura financeira<br>OFFI Finance</h2>
+                <p class="slide-subtitle">Transformação inteligente de CAPEX em OPEX</p>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">💰</div>
+                        <p class="metric-value-large">R$ 610k</p>
+                        <p class="metric-label-small">mensalidade total</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">📊</div>
+                        <p class="metric-value-large">R$ 180k</p>
+                        <p class="metric-label-small">OFFI Services/mês</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <p class="metric-value-large">15.14%</p>
+                        <p class="metric-label-small">taxa a.a. (CDI+3%)</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <p class="metric-value-large">60</p>
+                        <p class="metric-label-small">meses prazo</p>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Composição da mensalidade OFFI</h3>
+                    <div class="tax-breakdown">
+                        <div class="tax-row">
+                            <span class="tax-label">Aluguel base (R$ 145/m²)</span>
+                            <span class="tax-value">R$ 304.500</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">Condomínio</span>
+                            <span class="tax-value">R$ 84.000</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">IPTU</span>
+                            <span class="tax-value">R$ 42.000</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">OFFI Services:</span>
+                            <span class="tax-value"></span>
+                        </div>
+                        <div class="tax-row" style="padding-left: 24px;">
+                            <span class="tax-label">• Amortização fit-out</span>
+                            <span class="tax-value">R$ 120.000</span>
+                        </div>
+                        <div class="tax-row" style="padding-left: 24px;">
+                            <span class="tax-label">• Gestão facilities</span>
+                            <span class="tax-value">R$ 30.000</span>
+                        </div>
+                        <div class="tax-row" style="padding-left: 24px;">
+                            <span class="tax-label">• Manutenção preventiva</span>
+                            <span class="tax-value">R$ 15.000</span>
+                        </div>
+                        <div class="tax-row" style="padding-left: 24px;">
+                            <span class="tax-label">• Technology services</span>
+                            <span class="tax-value">R$ 15.000</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">Total mensal</span>
+                            <span class="tax-value">R$ 610.500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Slide 4: Tax Analysis -->
+        <section class="slide">
+            <div class="slide-number">03</div>
+            <div class="slide-content">
+                <h2 class="slide-title">Análise tributária<br>comparativa</h2>
+                <p class="slide-subtitle">Impacto fiscal detalhado por regime</p>
+                
+                <div class="financing-options">
+                    <div class="financing-card">
+                        <p class="financing-type">Regime CAPEX (Tradicional)</p>
+                        <h3 class="financing-title">Depreciação</h3>
+                        <ul class="financing-features">
+                            <li>
+                                <span class="feature-label">Base depreciação</span>
+                                <span class="feature-value">R$ 18.9M</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Taxa anual (RIR/99)</span>
+                                <span class="feature-value">10%</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Depreciação anual</span>
+                                <span class="feature-value">R$ 1.89M</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Economia IR/CSLL (34%)</span>
+                                <span class="feature-value">R$ 612k/ano</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Total 5 anos</span>
+                                <span class="feature-value">R$ 3.06M</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">PIS/COFINS (9,25%)</span>
+                                <span class="feature-value">48 meses</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="financing-card recommended">
+                        <p class="financing-type">Regime OPEX (OFFI)</p>
+                        <h3 class="financing-title">Dedução Integral</h3>
+                        <ul class="financing-features">
+                            <li>
+                                <span class="feature-label">Despesa mensal adicional</span>
+                                <span class="feature-value">R$ 180k</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Despesa anual</span>
+                                <span class="feature-value">R$ 2.16M</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Dedução LALUR</span>
+                                <span class="feature-value">100%</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Economia IR/CSLL (34%)</span>
+                                <span class="feature-value positive">R$ 734k/ano</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">Total 5 anos</span>
+                                <span class="feature-value positive">R$ 3.67M</span>
+                            </li>
+                            <li>
+                                <span class="feature-label">PIS/COFINS (9,25%)</span>
+                                <span class="feature-value positive">Mensal integral</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="summary-card" style="margin-top: 32px;">
+                    <p class="summary-label">Benefício fiscal adicional OFFI</p>
+                    <p class="summary-value positive">R$ 612k</p>
+                    <p class="summary-detail">20% superior ao modelo tradicional + cashflow de R$ 16.7k/mês em créditos</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Slide 5: Capital Analysis -->
+        <section class="slide">
+            <div class="slide-number">04</div>
+            <div class="slide-content">
+                <h2 class="slide-title">Custo de oportunidade<br>do capital</h2>
+                <p class="slide-subtitle">Impacto da preservação de capital no resultado final</p>
+                
+                <div class="insights-list">
+                    <div class="insight-item">
+                        <div class="insight-number">01</div>
+                        <div class="insight-content">
+                            <h3>Capital preservado: R$ 18.9M</h3>
+                            <p>Modelo OFFI Finance preserva 100% do capital que seria investido em fit-out, disponível para aplicação no core business da empresa.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">02</div>
+                        <div class="insight-content">
+                            <h3>ROE médio TechCorp: 22% a.a.</h3>
+                            <p>Com base no histórico pós Series B, o retorno sobre equity da empresa supera significativamente o custo do financiamento OFFI (15.14% a.a.).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">03</div>
+                        <div class="insight-content">
+                            <h3>Valor futuro do capital: R$ 44.8M</h3>
+                            <p>Aplicando R$ 18.9M a 20% a.a. por 5 anos, o montante final é R$ 44.8M, gerando R$ 25.9M de ganho adicional.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics-grid" style="margin-top: 48px;">
+                    <div class="metric-card">
+                        <p class="metric-label-small">Spread positivo</p>
+                        <p class="metric-value-large positive">6.86%</p>
+                        <p class="metric-label-small">ROE - Taxa OFFI</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">Ganho spread</p>
+                        <p class="metric-value-large positive">R$ 1.3M</p>
+                        <p class="metric-label-small">por ano</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">VPL do ganho</p>
+                        <p class="metric-value-large positive">R$ 4.7M</p>
+                        <p class="metric-label-small">@ 12% a.a.</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">IRR projeto</p>
+                        <p class="metric-value-large positive">38.5%</p>
+                        <p class="metric-label-small">com OFFI</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Slide 6: OFFI Coins -->
+        <section class="slide">
+            <div class="slide-number">05</div>
+            <div class="slide-content">
+                <h2 class="slide-title">OFFI Coins:<br>Incentivo adicional</h2>
+                <p class="slide-subtitle">Moeda digital que maximiza economia em mudanças futuras</p>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Estrutura de incentivos - Rebouças 1040</h3>
+                    <div class="tax-breakdown">
+                        <div class="tax-row">
+                            <span class="tax-label">Área total contratada</span>
+                            <span class="tax-value">2.100 m²</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">OFFI Coins por m²</span>
+                            <span class="tax-value">250 coins</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">Total OFFI Coins recebidos</span>
+                            <span class="tax-value positive">525.000</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">Valor em R$ (1:1)</span>
+                            <span class="tax-value positive">R$ 525.000</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-label">Economia adicional no fit-out</span>
+                            <span class="tax-value positive">2.8%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics-grid" style="margin-top: 32px;">
+                    <div class="metric-card">
+                        <div class="metric-icon">🪙</div>
+                        <p class="metric-value-large">R$ 0</p>
+                        <p class="metric-label-small">custo dos coins</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">♻️</div>
+                        <p class="metric-value-large">100%</p>
+                        <p class="metric-label-small">transferível</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">📈</div>
+                        <p class="metric-value-large">∞</p>
+                        <p class="metric-label-small">validade</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🏢</div>
+                        <p class="metric-value-large">78%</p>
+                        <p class="metric-label-small">economia 2ª mudança</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Slide 7: Final Recommendation -->
+        <section class="slide">
+            <div class="slide-number">06</div>
+            <div class="slide-content">
+                <h2 class="slide-title">Recomendação<br>executiva</h2>
+                
+                <div class="summary-card">
+                    <p class="summary-label">Valor total criado com OFFI Finance</p>
+                    <p class="summary-value positive">R$ 30.4M</p>
+                    <p class="summary-detail">VPL superior + Capital preservado + Benefícios fiscais + OFFI Coins</p>
+                </div>
+                
+                <div class="metrics-grid" style="margin-top: 60px;">
+                    <div class="metric-card">
+                        <p class="metric-label-small">Economia VPL</p>
+                        <p class="metric-value-large positive">R$ 18.8M</p>
+                        <p class="metric-label-small">vs tradicional</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">Capital livre</p>
+                        <p class="metric-value-large positive">R$ 18.9M</p>
+                        <p class="metric-label-small">para crescimento</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">Tempo ganho</p>
+                        <p class="metric-value-large positive">180 dias</p>
+                        <p class="metric-label-small">foco no negócio</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label-small">Risco obra</p>
+                        <p class="metric-value-large positive">Zero</p>
+                        <p class="metric-label-small">garantia OFFI</p>
+                    </div>
+                </div>
+                
+                <div class="insight-item" style="margin-top: 48px;">
+                    <div class="insight-content" style="text-align: center; width: 100%;">
+                        <h3>Decisão recomendada: OFFI Finance + Rebouças 1040</h3>
+                        <p>Maximiza retorno financeiro, preserva capital estratégico, elimina riscos operacionais e acelera ocupação em 75%. ROI comprovado de 38.5% com payback em 26 meses.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Progress bar
+        const progressBar = document.querySelector('.progress-fill');
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.querySelectorAll('.nav-dot');
+        const presentation = document.querySelector('.presentation');
+        
+        presentation.addEventListener('scroll', () => {
+            const scrollPercentage = (presentation.scrollTop / (presentation.scrollHeight - presentation.clientHeight)) * 100;
+            progressBar.style.width = scrollPercentage + '%';
+            
+            // Update nav dots
+            const currentSlide = Math.round((presentation.scrollTop / presentation.clientHeight));
+            navDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        });
+        
+        // Nav dot clicks
+        navDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                slides[index].scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const currentSlide = Math.round((presentation.scrollTop / presentation.clientHeight));
+            
+            if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) {
+                slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp' && currentSlide > 0) {
+                slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // Add positive/negative color classes
+        document.querySelectorAll('.metric-value, .feature-value, .tax-value').forEach(el => {
+            if (el.textContent.includes('+') || el.textContent.includes('Zero')) {
+                el.classList.add('positive');
+            } else if (el.textContent.includes('-') && !el.textContent.includes('-R$')) {
+                el.classList.add('negative');
+            }
+        });
+    </script>
+</body>
+</html>
